@@ -1,0 +1,134 @@
+{
+  "1T_CERTIFICATE": {
+    "name": "Удостоверение о повышении квалификации 1Т",
+    "organization": "1T",
+    "document_type": "certificate",
+    "fields": {
+      "full_name": [630, 280, 1150, 320],
+      "series_and_number": [207, 503, 380, 536],
+      "registration_number": [320, 725, 425, 755],
+      "issue_date": [150, 750, 440, 785]
+    },
+    "ocr_params": {
+      "scale_factor": 4,
+      "contrast_boost": 1.5,
+      "psm_configs": {
+        "full_name": 7,
+        "series_and_number": 7,
+        "registration_number": 7,
+        "issue_date": 6
+      }
+    }
+  },
+  "1T_DIPLOMA": {
+    "name": "Диплом о профессиональной переподготовке 1Т",
+    "organization": "1T",
+    "document_type": "diploma",
+    "fields": {
+      "full_name": [695, 262, 1120, 295],
+      "series_and_number": [240, 535, 355, 570],
+      "registration_number": [315, 725, 430, 760],
+      "issue_date": [200, 570, 410, 600]
+    },
+    "ocr_params": {
+      "scale_factor": 4,
+      "contrast_boost": 1.5,
+      "psm_configs": {
+        "full_name": 7,
+        "series_and_number": 7,
+        "registration_number": 7,
+        "issue_date": 7
+      }
+    }
+  },
+  "ROSNOU_DIPLOMA": {
+    "name": "Диплом о профессиональной переподготовке РОСНОУ",
+    "organization": "ROSNOU",
+    "document_type": "diploma",
+    "fields": {
+      "full_name": [750, 130, 1030, 185],
+      "series_and_number": [195, 385, 425, 415],
+      "registration_number": [215, 585, 415, 620],
+      "issue_date": [175, 700, 445, 730]
+    },
+    "ocr_params": {
+      "scale_factor": 6,
+      "contrast_boost": 2.5,
+      "psm_configs": {
+        "full_name": 6,
+        "series_and_number": 7,
+        "registration_number": 7,
+        "issue_date": 6
+      }
+    }
+  },
+  "ROSNOU_CERTIFICATE": {
+    "name": "Удостоверение о повышении квалификации РОСНОУ",
+    "organization": "ROSNOU",
+    "document_type": "certificate",
+    "fields": {
+      "full_name": [700, 150, 1050, 190],
+      "series_and_number": [215, 385, 445, 425],
+      "registration_number": [260, 565, 411, 590],
+      "issue_date": [230, 685, 420, 715]
+    },
+    "ocr_params": {
+      "scale_factor": 6,
+      "contrast_boost": 2.5,
+      "psm_configs": {
+        "full_name": 7,
+        "series_and_number": 7,
+        "registration_number": 7,
+        "issue_date": 6
+      }
+    }
+  },
+  "FINUNIVERSITY_CERTIFICATE_V1": {
+    "name": "Удостоверение Финансового университета (вариант 1)",
+    "organization": "FINUNIVERSITY",
+    "document_type": "certificate_v1",
+    "fields": {
+      "full_name": [645, 251, 995, 280],
+      "series_and_number": [740, 175, 971, 210],
+      "registration_number": [345, 650, 490, 678],
+      "issue_date": [885, 320, 1085, 350]
+    },
+    "ocr_params": {
+      "scale_factor": 4,
+      "contrast_boost": 2.0,
+      "psm_configs": {
+        "full_name": 7,
+        "series_and_number": 7,
+        "registration_number": 7,
+        "issue_date": 6
+      }
+    }
+  },
+  "FINUNIVERSITY_CERTIFICATE_V2": {
+    "name": "Удостоверение Финансового университета (вариант 2 - ФИО на трёх строках)",
+    "organization": "FINUNIVERSITY", 
+    "document_type": "certificate_v2",
+    "fields": {
+      "full_name": [826, 215, 1110, 320],
+      "series_and_number": [762, 178, 990, 216],
+      "registration_number": [370, 660, 475, 690],
+      "issue_date": [930, 320, 1110, 365]
+    },
+    "ocr_params": {
+      "scale_factor": 4,
+      "contrast_boost": 2.0,
+      "psm_configs": {
+        "full_name": 6,
+        "series_and_number": 7,
+        "registration_number": 7,
+        "issue_date": 6
+      }
+    }
+  },
+  "field_descriptions": {
+    "full_name": "ФИО получателя документа",
+    "series_and_number": "Серия и номер документа",
+    "registration_number": "Регистрационный номер",
+    "issue_date": "Дата выдачи документа"
+  }
+}

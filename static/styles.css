@@ -1,0 +1,182 @@
+/* OCR Платформа - Основные стили */
+
+/* Базовые настройки */
+.main > div {
+    padding-top: 0.5rem;
+}
+
+/* Контейнеры полей */
+.field-container {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #4ECDC4;
+    margin: 1rem 0;
+}
+
+/* Миниатюры */
+.thumbnail-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 5px;
+    min-height: 50px;
+    width: 100%;
+}
+
+.thumbnail-image {
+    height: 40px;
+    max-width: 100%;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #4ECDC4;
+    object-fit: contain;
+}
+
+/* Синие кнопки OCR */
+.stButton > button[data-testid="baseButton-primary"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+    transition: all 0.3s ease !important;
+    width: 100% !important;
+}
+
+.stButton > button[data-testid="baseButton-primary"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6) !important;
+}
+
+/* Строки результатов */
+.result-row {
+    background: white;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+/* Заголовки полей */
+.field-title {
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+    line-height: 1.2;
+    word-wrap: break-word;
+    hyphens: auto;
+    margin-bottom: 0.5rem;
+    min-width: 80px;
+    max-width: 120px;
+}
+
+/* Колонки */
+.thumbnail-column {
+    flex: 1;
+    max-width: none;
+    min-width: 200px;
+}
+
+.text-column {
+    flex: 0.7;
+    min-width: 200px;
+}
+
+/* JSON редактор */
+.json-editor {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Индикаторы */
+.uncertain-indicator {
+    color: #ffc107;
+    font-size: 1.2em;
+}
+
+.confident-indicator {
+    color: #28a745;
+    font-size: 1.2em;
+}
+
+/* Статус одобрения */
+.approval-status {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    padding: 0.5rem;
+    color: #155724;
+    font-weight: 500;
+}
+
+/* Текстовые области */
+.stTextArea > div > div > textarea {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+}
+
+/* Компактные кнопки */
+.compact-button {
+    padding: 0.25rem 0.75rem !important;
+    font-size: 14px !important;
+    margin: 0.25rem 0 !important;
+}
+
+/* Разделители страниц */
+.page-separator {
+    border-top: 2px solid #e1e5e9;
+    margin: 2rem 0 1rem 0;
+    padding-top: 1rem;
+}
+
+/* Заголовки страниц */
+.page-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    margin-bottom: 1rem;
+}
+
+.page-header h4 {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .result-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .field-title {
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .thumbnail-column,
+    .text-column {
+        flex: none;
+        min-width: auto;
+        width: 100%;
+    }
+}
