@@ -1,5 +1,5 @@
 """
-🔍 OCR Платформа - ОБНОВЛЕННАЯ ВЕРСИЯ с 4-колоночным интерфейсом и пиктограммами
+🔍 OCR Платформа
 """
 import streamlit as st
 import json
@@ -30,7 +30,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-TESSERACT_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+TESSERACT_PATH = None # r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def main():
     """Главная функция приложения"""
