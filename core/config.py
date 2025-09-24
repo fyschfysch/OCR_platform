@@ -1,5 +1,5 @@
 """
-Загрузка конфигурации из JSON файла с интеграцией парсеров
+Загрузка конфигурации из JSON файла с исправленной интеграцией парсеров
 """
 import json
 import os
@@ -82,11 +82,11 @@ class ConfigManager:
             self._create_default_configs()
     
     def _setup_parsers(self):
-        """Настройка парсеров для каждой конфигурации - ОБНОВЛЕНО для series_and_number"""
+        """Настройка парсеров для каждой конфигурации - ИСПРАВЛЕНО для FinUniv"""
         try:
             from .parsers import OneTParsers, RosNouParsers, FinUnivParsers, CommonParsers
             
-            # Маппинг парсеров для каждого типа документа - ОБНОВЛЕН
+            # Маппинг парсеров для каждого типа документа - ИСПРАВЛЕН FinUniv
             parsers_mapping = {
                 '1T_CERTIFICATE': {
                     'series_and_number': OneTParsers.parse_series_and_number,
@@ -112,6 +112,7 @@ class ConfigManager:
                     'issue_date': CommonParsers.parse_date_standard,
                     'full_name': RosNouParsers.parse_fullname_certificate
                 },
+                # ИСПРАВЛЕНО: Правильные парсеры для FinUniv
                 'FINUNIVERSITY_CERTIFICATE_V1': {
                     'series_and_number': FinUnivParsers.parse_series_and_number_v1,
                     'registration_number': FinUnivParsers.parse_reg_number_v1,
@@ -130,6 +131,9 @@ class ConfigManager:
             for config_key, config in self.configs.items():
                 if config_key in parsers_mapping:
                     config.patterns = parsers_mapping[config_key]
+                    print(f"✅ Парсеры подключены для {config_key}")
+                else:
+                    print(f"⚠️ Нет парсеров для {config_key}")
                     
             print("✅ Парсеры успешно интегрированы в конфигурации")
             

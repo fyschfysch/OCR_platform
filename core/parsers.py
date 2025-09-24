@@ -72,7 +72,7 @@ class OneTParsers:
     
     @staticmethod
     def parse_series_and_number(text: str) -> Tuple[str, str, bool]:
-        """Парсер серии и номера документа 1Т в формате '02 123456' - ЕДИНОЕ ПОЛЕ"""
+        """Парсер серии и номера документа 1Т в формате '02 123456'"""
         text = re.sub(r'[^\d\s]', ' ', text.strip())
         
         patterns = [r'(\d{2})\s*(\d{6})', r'(\d{2})[\s-]*(\d{6})', r'(\d{2})(\d{6})']
@@ -87,18 +87,16 @@ class OneTParsers:
     
     @staticmethod
     def parse_reg_number(text: str) -> Tuple[str, bool]:
-        """Парсер регистрационного номера 1Т - БЕЗ удаления начальных нулей"""
-        # Извлекаем только цифры
+        """Парсер регистрационного номера 1Т"""
         digits = ''.join(re.findall(r'\d', text))
         
         if not digits:
             return "000000", True
         
-        # Простое выравнивание до 6 знаков с сохранением всех цифр
         if len(digits) <= 6:
-            result = digits.zfill(6)  # Дополним нулями слева если нужно
+            result = digits.zfill(6)
         else:
-            result = digits  # Берем как есть, если больше 6 цифр
+            result = digits
         
         uncertain = len(digits) < 4
         return result, uncertain
@@ -126,7 +124,7 @@ class RosNouParsers:
     
     @staticmethod
     def parse_series_and_number(text: str) -> Tuple[str, str, bool]:
-        """Парсер серии и номера РОСНОУ в формате '12-Д 2024000010' - ЕДИНОЕ ПОЛЕ"""
+        """Парсер серии и номера РОСНОУ в формате '12-Д 2024000010'"""
         digits = ''.join(re.findall(r'\d', text))
         corrections_made = False
         
@@ -170,12 +168,12 @@ class RosNouParsers:
             result = f"{match.group(1)}-Д"
             return result, corrections_made
         
-        # Если точный шаблон не найден, пытаемся извлечь цифры БЕЗ удаления нулей
+        # Если точный шаблон не найден, пытаемся извлечь цифры
         digits = re.findall(r'\d', text)
         if digits:
-            number_part = ''.join(digits[:5])  # Берем первые 5 цифр как есть
+            number_part = ''.join(digits[:5])
             if len(number_part) < 5:
-                number_part = number_part.zfill(5)  # Дополняем нулями только если меньше 5
+                number_part = number_part.zfill(5)
             result = f"{number_part}-Д"
             print(f"🔧 Восстановлен номер: {result}")
             return result, True
@@ -188,7 +186,7 @@ class RosNouParsers:
         match = re.search(r'([А-Я]{2,3})-(\d{2,3})', text.upper(), re.IGNORECASE)
         if match:
             letters = match.group(1)
-            number = match.group(2)  # Сохраняем номер как есть
+            number = match.group(2)
             corrections_made = False
             
             # Исправление букв
@@ -229,34 +227,45 @@ class FinUnivParsers:
     
     @staticmethod
     def parse_series_and_number_v1(text: str) -> Tuple[str, str, bool]:
-        """Парсер серии и номера ФинУнив вариант 1: '7733 01156696' - ЕДИНОЕ ПОЛЕ"""
-        # Поиск основного шаблона
-        match = re.search(r'(\d{2,4})[\s-]*(\d{8,})', text.upper())
+        """Парсер серии и номера ФинУнив вариант 1: 'ПК 771804095780' или '7733 01156696'"""
+        # Основной паттерн: буквы + пробел + цифры
+        match = re.search(r'([А-ЯA-Z]{2,4})\s+(\d{8,})', text.upper())
         if match:
             series = match.group(1)
             number = match.group(2)
             uncertain = len(number) < 8
+            print(f"🔧 FinUniv v1 парсинг: '{text}' -> серия: '{series}', номер: '{number}'")
             return series, number, uncertain
         
-        # Альтернативный поиск
-        match = re.search(r'(\d{2,4})[\s-]*(\d{2,})', text.upper())
+        # Альтернативный паттерн: цифры + пробел + цифры
+        match = re.search(r'(\d{2,4})\s+(\d{8,})', text.upper())
         if match:
             series = match.group(1)
             number = match.group(2)
             uncertain = len(number) < 8
+            print(f"🔧 FinUniv v1 цифры: '{text}' -> серия: '{series}', номер: '{number}'")
             return series, number, uncertain
             
+        # Еще один паттерн: буквы без пробела + цифры
+        match = re.search(r'([А-ЯA-Z]{2,4})(\d{8,})', text.upper())
+        if match:
+            series = match.group(1)
+            number = match.group(2)
+            uncertain = len(number) < 8
+            print(f"🔧 FinUniv v1 без пробела: '{text}' -> серия: '{series}', номер: '{number}'")
+            return series, number, uncertain
+            
+        print(f"⚠️ FinUniv v1 не смог распознать: '{text}'")
         return "", "", True
     
     @staticmethod
     def parse_series_and_number_v2(text: str) -> Tuple[str, str, bool]:
-        """Парсер серии и номера ФинУнив вариант 2 - ЕДИНОЕ ПОЛЕ"""
+        """Парсер серии и номера ФинУнив вариант 2"""
         return FinUnivParsers.parse_series_and_number_v1(text)
     
     @staticmethod
     def parse_reg_number_v1(text: str) -> Tuple[str, bool]:
-        """Парсер регистрационного номера ФинУнив v1: '06.11373' - БЕЗ удаления нулей"""
-        # Ищем номер с точкой или без
+        """Парсер регистрационного номера ФинУнив v1: '06.11373'"""
         match = re.search(r'(\d+\.?\d*)', text, re.IGNORECASE)
         if match:
             result = match.group(1)
@@ -265,7 +274,7 @@ class FinUnivParsers:
     
     @staticmethod
     def parse_reg_number_v2(text: str) -> Tuple[str, bool]:
-        """Парсер регистрационного номера ФинУнив v2 - БЕЗ удаления нулей"""
+        """Парсер регистрационного номера ФинУнив v2"""
         return FinUnivParsers.parse_reg_number_v1(text)
     
     @staticmethod
