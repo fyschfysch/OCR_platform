@@ -1,5 +1,5 @@
 """
-Загрузка конфигурации из JSON файла с исправленной интеграцией парсеров
+Загрузка конфигурации из JSON файла
 """
 import json
 import os
@@ -82,11 +82,11 @@ class ConfigManager:
             self._create_default_configs()
     
     def _setup_parsers(self):
-        """Настройка парсеров для каждой конфигурации - ИСПРАВЛЕНО для FinUniv"""
+        """Настройка парсеров для каждой конфигурации"""
         try:
             from .parsers import OneTParsers, RosNouParsers, FinUnivParsers, CommonParsers
             
-            # Маппинг парсеров для каждого типа документа - ИСПРАВЛЕН FinUniv
+            # Маппинг парсеров для каждого типа документа
             parsers_mapping = {
                 '1T_CERTIFICATE': {
                     'series_and_number': OneTParsers.parse_series_and_number,
@@ -112,14 +112,14 @@ class ConfigManager:
                     'issue_date': CommonParsers.parse_date_standard,
                     'full_name': RosNouParsers.parse_fullname_certificate
                 },
-                # ИСПРАВЛЕНО: Правильные парсеры для FinUniv
-                'FINUNIVERSITY_CERTIFICATE_V1': {
+                # Правильные ключи из configs.json
+                'FINUNIVCERTV1': {
                     'series_and_number': FinUnivParsers.parse_series_and_number_v1,
                     'registration_number': FinUnivParsers.parse_reg_number_v1,
                     'issue_date': FinUnivParsers.parse_date_from_text,
                     'full_name': FinUnivParsers.parse_fullname_simple
                 },
-                'FINUNIVERSITY_CERTIFICATE_V2': {
+                'FINUNIVCERTV2': {
                     'series_and_number': FinUnivParsers.parse_series_and_number_v2,
                     'registration_number': FinUnivParsers.parse_reg_number_v2,
                     'issue_date': FinUnivParsers.parse_date_from_text,
