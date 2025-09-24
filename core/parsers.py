@@ -227,35 +227,61 @@ class FinUnivParsers:
     
     @staticmethod
     def parse_series_and_number_v1(text: str) -> Tuple[str, str, bool]:
-        """Парсер серии и номера ФинУнив вариант 1: 'ПК 771804095780' или '7733 01156696'"""
-        # Основной паттерн: буквы + пробел + цифры
-        match = re.search(r'([А-ЯA-Z]{2,4})\s+(\d{8,})', text.upper())
+        """Парсер серии и номера ФинУнив v1 с коррекцией OCR"""
+        print(f"🔧 FinUniv v1 парсинг: '{text}'")
+        
+        # Очистка и подготовка текста
+        cleaned_text = text.upper().strip()
+        
+        # OCR коррекции латинских букв на русские для FinUniv
+        ocr_corrections = {
+            'NK': 'ПК',    # N->П, K->К
+            'PK': 'ПК',    # P->П, K->К  
+            'PA': 'РА',    # P->Р, A->А
+            'PC': 'РС',    # P->Р, C->С
+        }
+        
+        # Применяем коррекции
+        original_text = cleaned_text
+        for wrong, correct in ocr_corrections.items():
+            if wrong in cleaned_text:
+                cleaned_text = cleaned_text.replace(wrong, correct)
+                print(f"🔧 OCR коррекция: {wrong} -> {correct}")
+        
+        # Основной паттерн: русские буквы + пробел + цифры
+        match = re.search(r'([А-Я]{2,4})\s+(\d{8,})', cleaned_text)
         if match:
             series = match.group(1)
             number = match.group(2)
             uncertain = len(number) < 8
-            print(f"🔧 FinUniv v1 парсинг: '{text}' -> серия: '{series}', номер: '{number}'")
+            print(f"✅ FinUniv русские буквы: серия='{series}', номер='{number}'")
             return series, number, uncertain
         
-        # Альтернативный паттерн: цифры + пробел + цифры
-        match = re.search(r'(\d{2,4})\s+(\d{8,})', text.upper())
+        # Альтернативный: латинские буквы + пробел + цифры (если коррекция не сработала)
+        match = re.search(r'([A-Z]{2,4})\s+(\d{8,})', cleaned_text)
+        if match:
+            series = match.group(1)
+            number = match.group(2)
+            # Пытаемся конвертировать латинские в русские
+            latin_to_cyrillic = {
+                'A': 'А', 'B': 'В', 'C': 'С', 'E': 'Е', 'H': 'Н', 'K': 'К', 
+                'M': 'М', 'O': 'О', 'P': 'Р', 'T': 'Т', 'X': 'Х', 'Y': 'У'
+            }
+            cyrillic_series = ''.join(latin_to_cyrillic.get(char, char) for char in series)
+            uncertain = len(number) < 8
+            print(f"✅ FinUniv латинские->русские: серия='{cyrillic_series}', номер='{number}'")
+            return cyrillic_series, number, uncertain
+        
+        # Цифровая серия + пробел + цифры (для случая '7733 01156696')
+        match = re.search(r'(\d{2,4})\s+(\d{8,})', cleaned_text)
         if match:
             series = match.group(1)
             number = match.group(2)
             uncertain = len(number) < 8
-            print(f"🔧 FinUniv v1 цифры: '{text}' -> серия: '{series}', номер: '{number}'")
+            print(f"✅ FinUniv цифровая серия: серия='{series}', номер='{number}'")
             return series, number, uncertain
-            
-        # Еще один паттерн: буквы без пробела + цифры
-        match = re.search(r'([А-ЯA-Z]{2,4})(\d{8,})', text.upper())
-        if match:
-            series = match.group(1)
-            number = match.group(2)
-            uncertain = len(number) < 8
-            print(f"🔧 FinUniv v1 без пробела: '{text}' -> серия: '{series}', номер: '{number}'")
-            return series, number, uncertain
-            
-        print(f"⚠️ FinUniv v1 не смог распознать: '{text}'")
+        
+        print(f"❌ FinUniv v1 не распознал: '{original_text}' -> '{cleaned_text}'")
         return "", "", True
     
     @staticmethod
@@ -323,10 +349,25 @@ class FinUnivParsers:
     
     @staticmethod
     def parse_date_from_text(text: str) -> Tuple[str, bool]:
-        """Парсер даты из текста ФинУнив с OCR-коррекциями"""
+        """Парсер даты из текста ФинУнив с улучшенной очисткой OCR артефактов"""
+        # Очистка OCR артефактов
+        cleaned_text = text.strip()
+        
+        # Убираем типичные OCR мусор
+        ocr_artifacts = ['«', '»', '"', "'", 'о«', '»о', 'г.', 'года', 'г', '.']
+        for artifact in ocr_artifacts:
+            cleaned_text = cleaned_text.replace(artifact, ' ')
+        
+        # Нормализуем пробелы
+        cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
+        
+        print(f"🔧 Очистка даты: '{text}' -> '{cleaned_text}'")
+        
+        # Паттерны для поиска даты
         date_patterns = [
-            r'(\d{1,2})\s+(\w+)\s+(\d{4})',  # '30 мая 2024'
-            r'«?(\d{1,2})\s*»?\s+(\w+)\s+(\d{4})',  # '«30» мая 2024'
+            r'(\d{1,2})\s+(\w+)\s+(\d{4})',  # '30 ноября 2024'
+            r'«?(\d{1,2})\s*»?\s+(\w+)\s+(\d{4})',  # '«30» ноября 2024'
+            r'(\d{1,2})[«»\s]+(\w+)\s+(\d{4})',  # Учитываем кавычки
         ]
         
         months = {
@@ -336,17 +377,22 @@ class FinUnivParsers:
         }
         
         for pattern in date_patterns:
-            match = re.search(pattern, text, re.IGNORECASE)
+            match = re.search(pattern, cleaned_text, re.IGNORECASE | re.UNICODE)
             if match:
                 day, month_str, year = match.groups()
-                month = months.get(month_str.lower())
+                month_str = month_str.lower().strip()
+                month = months.get(month_str)
                 
                 if month:
                     try:
-                        result = datetime(int(year), int(month), int(day)).date().isoformat()
-                        print(f"🔧 Дата распознана: {text.strip()} -> {result}")
+                        day_int = int(day)
+                        year_int = int(year)
+                        result = datetime(year_int, int(month), day_int).date().isoformat()
+                        print(f"✅ Дата распознана: '{text}' -> {result}")
                         return result, False
-                    except ValueError:
+                    except ValueError as e:
+                        print(f"⚠️ Ошибка даты: {e}")
                         continue
                         
-        return text.strip(), True
+        print(f"❌ Дата не распознана: '{text}'")
+        return cleaned_text, True

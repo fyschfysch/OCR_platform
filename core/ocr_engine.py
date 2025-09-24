@@ -60,7 +60,8 @@ class OCREngine:
         return img
     
     def extract_text_from_region(self, image: Image.Image, box: List[int],
-                                ocr_params: Dict[str, Any] = None, field_name: str = "") -> str:
+                                ocr_params: Dict[str, Any] = None, field_name: str = "", 
+                                organization: str = None) -> str:
         """Извлечение текста из региона изображения"""
         try:
             if not box or len(box) != 4:
@@ -94,7 +95,7 @@ class OCREngine:
             
             # PSM и язык
             psm = self.get_psm_for_field(field_name, ocr_params)
-            lang = self.get_language_for_field(field_name)
+            lang = self.get_language_for_field(field_name, organization)
             
             # OCR
             config_str = f'--oem 3 --psm {psm}'
@@ -121,12 +122,15 @@ class OCREngine:
         else:
             return 7
     
-    def get_language_for_field(self, field_name: str) -> str:
-        """Получение языка для поля"""
+    def get_language_for_field(self, field_name: str, organization: str = None) -> str:
+        """Получение языка для поля с учетом организации"""
         if field_name == 'full_name':
             return 'rus'
         elif field_name == 'series_and_number':
-            return 'rus+eng'  # Для буквенно-цифровых серий
+            if organization == 'FINUNIVERSITY':
+                return 'rus'  # FinUniv всегда русские буквы
+            else:
+                return 'rus+eng'  # Для остальных смешанный
         elif field_name == 'registration_number':
             return 'rus+eng'
         elif field_name == 'issue_date':
@@ -146,8 +150,8 @@ class OCREngine:
         for field_name, box in config.fields.items():
             print(f"\n📋 Обрабатываем поле: {field_name}")
             
-            # Извлечение текста
-            raw_text = self.extract_text_from_region(image, box, config.ocr_params, field_name)
+            # Извлечение текста С ПЕРЕДАЧЕЙ ОРГАНИЗАЦИИ
+            raw_text = self.extract_text_from_region(image, box, config.ocr_params, field_name, config.organization)
             print(f"🔤 OCR текст: '{raw_text}'")
             
             if not raw_text.strip():
